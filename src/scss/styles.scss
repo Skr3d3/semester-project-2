@@ -1,0 +1,121 @@
+// SCSS
+
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/variables-dark";
+
+// Custom variables
+
+@import "variables";
+@import "variables-dark";
+
+// Main bootstrap files
+
+@import "../../node_modules/bootstrap/scss/maps";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/utilities";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Extended classes
+
+@import "buttons";
+
+.nav-link:hover {
+  transform: scale(1.2) translate(6.5%, 0);
+}
+.nav-link:active {
+  font-weight: bolder;
+}
+.nav-link {
+  transition:
+    all 0.15s ease-in-out,
+    font-weight 0.1s ease-in-out;
+}
+.primary-text,
+li {
+  color: $gold;
+}
+
+.navbar-brand {
+  font-family: $navbar-brand-family;
+}
+nav img {
+  cursor: pointer;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body.dark-mode .navbar,
+body.dark-mode #sliding-menu {
+  background-color: #1f1f1f;
+  color: #ffffff;
+}
+
+body.dark-mode .form-control {
+  background-color: #333;
+  color: #fff;
+}
+
+#sliding-menu {
+  width: 300px;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1050;
+  border: 1px solid $gold;
+}
+#sliding-menu > * {
+  color: var(--gold);
+}
+header,
+footer div,
+#sliding-menu {
+  background-color: $navy-blue;
+}
+.navbar-brand {
+  width: 49px;
+}
+
+// Loading animation
+
+.loadingcontainer {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .navbar.fixed-bottom {
+    display: none;
+  }
+
+  .search-bar {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar.fixed-bottom {
+    display: flex !important;
+  }
+
+  #search-input-top {
+    display: none !important;
+  }
+}

@@ -1,0 +1,58 @@
+.btn {
+  &-primary {
+    transition:
+      all 0,
+      3s ease-in-out;
+    background-color: rgba($navy-blue, 0.8);
+    border-color: rgba($navy-blue, 0.5);
+    color: $gold;
+    &:hover {
+      background-color: rgba($navy-blue, 0.9);
+      border-color: rgba($navy-blue, 1);
+      outline: 2px solid $gold;
+      color: rgba($gold, 1);
+    }
+    &:active {
+      background-color: rgba($navy-blue, 0.9);
+      border-color: rgba($navy-blue, 1);
+      outline: 3px solid $gold;
+      color: rgba($gold, 1);
+    }
+  }
+  &-secondary {
+    background-color: rgba($navy-blue, 0.9);
+    border: rgba($gold, 1) solid 1px;
+    color: rgba($gold, 0.8);
+    &:hover {
+      background-color: rgba($navy-blue, 0.9);
+      border: rgba($gold, 0) solid 1px;
+      outline: 2px solid $gold;
+      color: rgba($gold, 1);
+    }
+    &:active {
+      transform: scale(1.1);
+    }
+  }
+  &-special {
+    @extend .btn-secondary;
+
+    border-color: rgba($navy-blue, 0.8);
+    &:hover {
+      background-color: $primary-bg-subtle-dark;
+    }
+  }
+  &-subtle {
+    @extend .btn-secondary;
+
+    background-color: transparent;
+    &:active {
+      background-color: transparent;
+    }
+    &:hover {
+      background-color: transparent;
+    }
+    &:focus {
+      border: rgba($gold, 1) solid 1px;
+    }
+  }
+}
