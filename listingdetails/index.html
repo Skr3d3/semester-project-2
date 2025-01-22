@@ -17,6 +17,11 @@
       crossorigin="anonymous"
     ></script>
     <script defer type="module" src="../src/js/index.mjs"></script>
+    <script
+      defer
+      type="module"
+      src="../src/js/listings/listingdetails.mjs"
+    ></script>
     <title>Auction Site</title>
   </head>
 
@@ -68,7 +73,9 @@
             <a class="nav-link" href="../profile/index.html">Profile</a>
           </li>
           <li class="nav-item mt-2">
-            <button class="btn btn-subtle w-100">Login / Signup</button>
+            <button id="auth-btn" class="btn btn-subtle w-100">
+              Login / Signup
+            </button>
           </li>
           <li class="nav-item mt-2">
             <button class="btn btn-dark w-100" id="dark-mode-toggle">
@@ -80,7 +87,7 @@
     </header>
 
     <main>
-      <div class="container my-4" id="card-container">
+      <div class="container my-4" id="details-container">
         <!-- Live data -->
       </div>
     </main>

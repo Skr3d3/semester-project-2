@@ -1,3 +1,5 @@
+import { accessToken, APIKey } from "./api.mjs";
+
 /**
  * Asynchronously performs a fetch request with the provided URL and options.
  * This function automatically adds the appropriate headers, including authentication
@@ -10,14 +12,16 @@
  * @async
  */
 export async function authFetch(url, options = {}) {
-  return fetch(url, {
+  const requestOptions = {
     ...options,
     headers: headers(Boolean(options.body)),
-  });
-}
+  };
 
-export const APIKey = "6451878b-0eb6-4b53-aa3b-9a9044eb145a";
-export const accessToken = localStorage.getItem("accessToken");
+  console.log("Request URL:", url);
+  console.log("Request Options:", requestOptions);
+
+  return fetch(url, requestOptions);
+}
 
 export function headers(hasBody = false) {
   const headers = new Headers();

@@ -1,4 +1,4 @@
-import { createAPIKey } from "./auth/api.mjs";
+import { setProfileButton, displayUserCredits } from "./profile/profile.mjs";
 
 const backBtn = document.getElementById("back-button");
 backBtn.addEventListener("click", () => {
@@ -7,7 +7,7 @@ backBtn.addEventListener("click", () => {
 
 const navbarBrand = document.querySelector(".navbar-brand");
 navbarBrand.addEventListener("click", () => {
-  location.href = "./index.html";
+  location.href = "../index.html";
 });
 
 const toggleButton = document.getElementById("dark-mode-toggle");
@@ -31,4 +31,49 @@ document.addEventListener("click", (e) => {
     return;
   }
   slidingMenu.style.transform = "translateX(100%)";
+});
+
+// Login/logout button
+
+document.addEventListener("DOMContentLoaded", () => {
+  const authBtn = document.getElementById("auth-btn");
+
+  if (!authBtn) {
+    console.error("Auth button (#auth-btn) not found in the DOM");
+    return;
+  }
+
+  function isUserLoggedIn() {
+    return (
+      localStorage.getItem("accessToken") !== null ||
+      sessionStorage.getItem("accessToken") !== null
+    );
+  }
+
+  function updateAuthButton() {
+    if (isUserLoggedIn()) {
+      authBtn.textContent = "Logout";
+      authBtn.classList.replace("btn-subtle", "btn-danger");
+      authBtn.onclick = () => {
+        localStorage.removeItem("accessToken");
+        sessionStorage.removeItem("accessToken");
+        alert("Logged out successfully!");
+        updateAuthButton();
+      };
+    } else {
+      authBtn.textContent = "Login / Signup";
+      authBtn.classList.replace("btn-danger", "btn-subtle");
+      authBtn.onclick = () => {
+        location.href = "./login/index.html";
+      };
+    }
+  }
+  updateAuthButton();
+});
+
+// Profile button
+
+document.addEventListener("DOMContentLoaded", () => {
+  setProfileButton();
+  displayUserCredits();
 });

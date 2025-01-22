@@ -1,7 +1,7 @@
 import { authFetch } from "./fetch.mjs";
 
-export const baseUrlVersion = "v2";
-export const baseUrl = `https://${baseUrlVersion}.api.noroff.dev`;
+export const APIKey = "6451878b-0eb6-4b53-aa3b-9a9044eb145a";
+export const accessToken = localStorage.getItem("accessToken");
 
 // renew API Key
 

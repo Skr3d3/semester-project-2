@@ -12,11 +12,12 @@
       defer
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     ></script>
+    <script defer type="module" src="../src/js/index.mjs"></script>
+    <script defer type="module" src="../src/js/auth/signup.mjs"></script>
     <script
       src="https://kit.fontawesome.com/58f57f3efa.js"
       crossorigin="anonymous"
     ></script>
-    <script defer type="module" src="../src/js/index.mjs"></script>
     <title>Auction Site</title>
   </head>
 
@@ -68,7 +69,9 @@
             <a class="nav-link" href="../profile/index.html">Profile</a>
           </li>
           <li class="nav-item mt-2">
-            <button class="btn btn-subtle w-100">Login / Signup</button>
+            <button id="auth-btn" class="btn btn-subtle w-100">
+              Login / Signup
+            </button>
           </li>
           <li class="nav-item mt-2">
             <button class="btn btn-dark w-100" id="dark-mode-toggle">
@@ -80,8 +83,78 @@
     </header>
 
     <main>
-      <div class="container my-4" id="card-container">
-        <!-- Live data -->
+      <div class="container my-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card p-4">
+              <h3 class="text-center mb-4">Sign Up</h3>
+              <form id="signup-form">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    placeholder="Enter your name"
+                    required
+                  />
+                  <div class="invalid-feedback">Name is required.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    placeholder="Enter your @stud.noroff.no email"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please use a valid @stud.noroff.no email address.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    placeholder="Enter your password"
+                    minlength="8"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Password must be at least 8 characters long.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="retype-password" class="form-label"
+                    >Retype Password</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="retype-password"
+                    placeholder="Retype your password"
+                    required
+                  />
+                  <div class="invalid-feedback">Passwords must match.</div>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+                <div class="text-center mt-3">
+                  <p>
+                    Already have an account?
+                    <a href="../login/index.html" class="text-decoration-none"
+                      >Login!</a
+                    >
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
