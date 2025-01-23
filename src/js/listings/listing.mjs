@@ -39,15 +39,24 @@ function displayListings(listings) {
     const col = document.createElement("div");
     col.className = "col-12 col-md-6 col-lg-4";
 
+    function shortenText(text, maxLength) {
+      if (!text) return "No description available.";
+      return text.length > maxLength
+        ? text.substring(0, maxLength) + "..."
+        : text;
+    }
+
     col.innerHTML = `
-            <div class="card h-100">
-                <img src="${listing.media?.[0] || "https://via.placeholder.com/150"}" class="card-img-top" alt="${listing.title}">
-                <div class="card-body">
-                    <h5 class="card-title">${listing.title}</h5>
-                    <p class="card-text">${listing.description || "No description available."}</p>
+            <div class="card d-flex h-100">
+                <div class="card-body d-flex flex-row align-items-center gap-3">
+                    <img src="${listing.media?.[0] || "https://via.placeholder.com/150"}" class="card-img-top" alt="${shortenText(listing.title, 5)}">
+                    <div>
+                    <h5 class="card-title">${shortenText(listing.title, 20)}</h5>
+                    <p class="card-text">${shortenText(listing.description, 50)}</p>
                     <p class="card-text"><small class="text-muted">Ends: ${new Date(listing.endsAt).toLocaleString()}</small></p>
-                    <button class="btn btn-primary listingbtn" data-id="${listing.id}">View Listing</button>
                     <p class="card-text"><small class="text-muted">${new Date(listing.created).toLocaleString()}</small></p>
+                    </div>
+                    <button class="btn btn-primary listingbtn h-50" data-id="${listing.id}">View Listing</button>
                 </div>
             </div>
         `;

@@ -16,8 +16,12 @@
       src="https://kit.fontawesome.com/58f57f3efa.js"
       crossorigin="anonymous"
     ></script>
-    <script defer type="module" src="src/js/index.mjs"></script>
-    <script defer type="module" src="src/js/listings/listing.mjs"></script>
+    <script defer type="module" src="../src/js/index.mjs"></script>
+    <script
+      defer
+      type="module"
+      src="../src/js/listings/newlisting.mjs"
+    ></script>
     <title>Auction Site</title>
   </head>
 
@@ -29,7 +33,7 @@
           src="/images/ActionHouseLogo.png"
           alt="Action House Logo"
         />
-        <div id="api-number" class="text-center primary-text"></div>
+        <div id="api-number" class="text-center primary-text">0</div>
         <div class="d-none d-md-flex search-bar">
           <input
             type="text"
@@ -37,7 +41,7 @@
             id="search-input-top"
             placeholder="Search..."
           />
-          <button class="btn btn-subtle" id="search-button-top">
+          <button class="btn btn-subtle" id="search-button">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
@@ -60,22 +64,22 @@
         ></button>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <button class="btn btn-dark w-100 mb-4" id="dark-mode-toggle">
-              Dark Mode
-            </button>
+            <a class="nav-link" href="../index.html">Listings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./index.html">Listings</a>
+            <a class="nav-link" href="../biddings/index.html">Biddings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/biddings/index.html">Biddings</a>
+            <a class="nav-link" href="../profile/index.html">Profile</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="profile/index.html">Profile</a>
-          </li>
-          <li class="nav-item mt-auto">
+          <li class="nav-item mt-2">
             <button id="auth-btn" class="btn btn-subtle w-100">
               Login / Signup
+            </button>
+          </li>
+          <li class="nav-item mt-2">
+            <button class="btn btn-dark w-100" id="dark-mode-toggle">
+              Dark Mode
             </button>
           </li>
         </ul>
@@ -83,16 +87,43 @@
     </header>
 
     <main>
-      <div class="container my-4 text-center">
-        <h1 class="display-3 mb-4">Auction House</h1>
-        <a href="./createnewlisting/index.html" class="btn btn-primary"
-          >Create New Listing</a
-        >
-      </div>
-      <div class="container">
-        <div id="card-container">
-          <!-- Live data -->
-        </div>
+      <div class="container my-5">
+        <h2>Create New Listing</h2>
+        <form id="create-listing-form">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title (Required)</label>
+            <input type="text" id="title" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" class="form-control"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="tags" class="form-label">Tags (comma-separated)</label>
+            <input type="text" id="tags" class="form-control" />
+          </div>
+
+          <div class="mb-3">
+            <label for="media" class="form-label"
+              >Image URL (comma-separated)</label
+            >
+            <input type="text" id="media" class="form-control" />
+          </div>
+
+          <div class="mb-3">
+            <label for="endsAt" class="form-label">End Date (Required)</label>
+            <input
+              type="datetime-local"
+              id="endsAt"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit Listing</button>
+        </form>
       </div>
     </main>
 
@@ -111,7 +142,7 @@
             placeholder="Search..."
           />
         </div>
-        <button class="btn btn-subtle" id="search-button-bottom">
+        <button class="btn btn-subtle" id="search-button">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </div>
