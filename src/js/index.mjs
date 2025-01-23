@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateAuthButton();
 });
 
-// Profile button
+// Profile button and user credits
 
 document.addEventListener("DOMContentLoaded", () => {
   setProfileButton();

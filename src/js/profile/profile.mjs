@@ -3,6 +3,10 @@ import { baseUrl } from "../auth/endpoints.mjs";
 import { authFetch } from "../auth/fetch.mjs";
 
 async function fetchProfile(name) {
+  if (!name) {
+    console.warn("Profile name not applicable. Skipping profile fetch.");
+    return;
+  }
   const profileEndpoint = `${baseUrl}/auction/profiles/${name}`;
 
   try {
@@ -20,6 +24,10 @@ async function fetchProfile(name) {
 }
 
 async function fetchUserListings(name, limit = 3, offset = 0) {
+  if (!name) {
+    console.warn("Profile listings not applicable. Skipping listing fetch.");
+    return;
+  }
   const listingsEndpoint = `${baseUrl}/auction/profiles/${name}/listings?limit=${limit}&offset=${offset}`;
 
   try {
@@ -40,7 +48,6 @@ function displayListings(listings, append = false) {
   const listingsContainer = document.getElementById("listings-container");
 
   if (!listingsContainer) {
-    console.error("Listings container not found in DOM");
     return;
   }
 
@@ -75,16 +82,18 @@ function setupLoadMoreButton(name, initialListings) {
     return;
   }
 
-  let offset = 3;
+  let offset = initialListings.length;
   const limit = 3;
 
   loadMoreButton.addEventListener("click", async () => {
     try {
-      const listings = await fetchUserListings(name, limit, offset);
-      displayListings(listings, true);
-      offset += limit;
+      const newListings = await fetchUserListings(name, limit, offset);
+      displayListings(newListings, true);
+      offset += newListings.length;
+      console.log(`offset: ${offset}, limit: ${limit}`);
+      console.log(`listings fetched: ${newListings.length}`);
 
-      if (listings.length < limit) {
+      if (newListings.length < limit) {
         loadMoreButton.style.display = "none";
       }
     } catch (error) {
@@ -97,9 +106,15 @@ function displayProfile(profile) {
   const profileContainer = document.getElementById("profile-container");
 
   if (!profileContainer) {
-    console.error("Profile container not found in DOM");
     return;
   }
+
+  const tokenPayload = accessToken
+    ? JSON.parse(atob(accessToken.split(".")[1]))
+    : null;
+  const loggedInUser = tokenPayload ? tokenPayload.name : null;
+
+  const isOwnProfile = loggedInUser === profile.name;
 
   profileContainer.innerHTML = `
       <div class="profile-banner">
@@ -117,27 +132,40 @@ function displayProfile(profile) {
         <p><strong>Wins:</strong> ${profile._count.wins}</p>
       </div>
 
-      <form id="profile-update-form" class="mt-4">
-        <div class="mb-3">
-          <label for="avatar-url" class="form-label">Avatar URL:</label>
-          <input type="url" id="avatar-url" class="form-control" value="${profile.avatar.url}">
-        </div>
-        <div class="mb-3">
-          <label for="banner-url" class="form-label">Banner URL:</label>
-          <input type="url" id="banner-url" class="form-control" value="${profile.banner.url}">
-        </div>
-        <div class="mb-3">
-          <label for="bio" class="form-label">Bio:</label>
-          <textarea id="bio" class="form-control">${profile.bio || ""}</textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Profile</button>
-      </form>
+      ${
+        isOwnProfile
+          ? `<form id="profile-update-form" class="mt-4">
+              <div class="mb-3">
+                <label for="avatar-url" class="form-label">Avatar URL:</label>
+                <input type="url" id="avatar-url" class="form-control" value="${profile.avatar.url}">
+              </div>
+              <div class="mb-3">
+                <label for="banner-url" class="form-label">Banner URL:</label>
+                <input type="url" id="banner-url" class="form-control" value="${profile.banner.url}">
+              </div>
+              <div class="mb-3">
+                <label for="bio" class="form-label">Bio:</label>
+                <textarea id="bio" class="form-control">${profile.bio || ""}</textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>`
+          : ""
+      }
 
       <div id="listings-container" class="mt-5"></div>
       <div class="text-center">
         <button id="load-more-button" class="btn btn-primary mt-3">Load More</button>
       </div>
     `;
+
+  if (isOwnProfile) {
+    document
+      .getElementById("profile-update-form")
+      .addEventListener("submit", (event) => {
+        event.preventDefault();
+        updateProfile(profile.name);
+      });
+  }
 }
 
 async function updateProfile(name) {
@@ -223,14 +251,16 @@ export async function initializeProfilePage() {
     const listings = await fetchUserListings(profileName);
     displayListings(listings);
 
-    setupLoadMoreButton(profileName);
+    setupLoadMoreButton(profileName, listings);
 
-    document
-      .getElementById("profile-update-form")
-      .addEventListener("submit", (event) => {
+    const profileUpdateForm = document.getElementById("profile-update-form");
+
+    if (profileUpdateForm) {
+      profileUpdateForm.addEventListener("submit", (event) => {
         event.preventDefault();
         updateProfile(profileName);
       });
+    }
   } catch (error) {
     if (profileContainer) {
       profileContainer.innerHTML =
