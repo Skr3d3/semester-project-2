@@ -36,6 +36,10 @@ async function fetchListingDetails() {
 
 function displayListingDetails(listing) {
   const container = document.getElementById("details-container");
+
+  const imageUrl = listing.media?.[0]?.url || "https://via.placeholder.com/150";
+  const imageAlt = listing.media?.[0]?.alt || "No image available";
+
   const highestBid =
     listing.bids?.length > 0
       ? Math.max(...listing.bids.map((bid) => bid.amount))
@@ -43,7 +47,7 @@ function displayListingDetails(listing) {
 
   container.innerHTML = `
         <div class="card">
-            <img src="${listing.media?.[0] || "https://via.placeholder.com/150"}" class="card-img-top" alt="${listing.title}">
+            <img src="${imageUrl}" class="card-img-top" alt="${imageAlt}">
             <div class="card-body">
                 <h5 class="card-title">${listing.title}</h5>
                 <p class="card-text">${listing.description || "No description available."}</p>
