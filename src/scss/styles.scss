@@ -43,6 +43,19 @@ nav img {
   cursor: pointer;
 }
 
+.card-img-top {
+  max-width: 400px;
+}
+
+.card-body img {
+  max-height: 120px;
+  max-width: 80px;
+}
+.card-body button {
+  max-height: 80px;
+  max-width: 80px;
+}
+
 body.dark-mode {
   background-color: #121212;
   color: #ffffff;
