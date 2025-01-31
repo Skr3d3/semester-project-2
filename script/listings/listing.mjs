@@ -54,15 +54,19 @@ export function displayListings(listings, append = false) {
 
     col.innerHTML = `
             <div class="card d-flex h-100">
-                <div class="card-body d-flex flex-row align-items-center gap-3">
-                    <img src="${imageUrl}" class="card-img-top" alt="${shortenText(imageAlt, 5)}">
-                    <div>
+                <div class="img-container">
+                <img src="${imageUrl}" class="card-img-top" alt="${shortenText(imageAlt, 5)}">
+                </div>
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${shortenText(listing.title, 20)}</h5>
                     <p class="card-text">${shortenText(listing.description, 50)}</p>
-                    <p class="card-text"><small class="text-muted">Ends: ${new Date(listing.endsAt).toLocaleString()}</small></p>
-                    <p class="card-text"><small class="text-muted">Created: ${new Date(listing.created).toLocaleString()}</small></p>
+                    
+                    <div class="mt-auto d-flex justify-content-between text-muted">
+                        <small><strong>Created:</strong> ${new Date(listing.created).toLocaleDateString()}</small>
+                        <small><strong>Ends:</strong> ${new Date(listing.endsAt).toLocaleDateString()}</small>
                     </div>
-                    <button class="btn btn-primary listingbtn h-50" data-id="${listing.id}">View Listing</button>
+
+                    <button class="btn btn-primary listingbtn mt-3 align-self-center" data-id="${listing.id}">View Listing</button>
                 </div>
             </div>
         `;

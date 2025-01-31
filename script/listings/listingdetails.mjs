@@ -46,8 +46,8 @@ function displayListingDetails(listing) {
       : "No bids yet";
 
   container.innerHTML = `
-        <div class="card">
-            <img src="${imageUrl}" class="card-img-top" alt="${imageAlt}">
+        <div class="card align-items-center my-4">
+            <img src="${imageUrl}" class="card-img-top align-self-center" alt="${imageAlt}">
             <div class="card-body">
                 <h5 class="card-title">${listing.title}</h5>
                 <p class="card-text">${listing.description || "No description available."}</p>
@@ -57,7 +57,7 @@ function displayListingDetails(listing) {
                 ${accessToken ? `<p><strong>Highest Bid:</strong> ${highestBid}</p>` : ""}
                 <p><strong>Seller:</strong> <a href="../profile/index.html?name=${listing.seller.name}">${listing.seller.name}</a></p>
                 ${renderBidSection(listing)}
-                <button class="btn btn-secondary" onclick="window.history.back()">Back</button>
+                ${!accessToken ? `<button class="btn btn-secondary mt-3" onclick="window.history.back()">Back</button>` : ""}
             </div>
         </div>
     `;
@@ -69,13 +69,13 @@ function renderBidSection(listing) {
   }
 
   return `
-    <div class="mt-4">
+    <div class="mt-4 container text-center">
       <h6>Place a Bid</h6>
       <form id="bid-form">
         <div class="mb-3">
           <input type="number" id="bid-amount" class="form-control" placeholder="Enter your bid" min="1" required>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Bid</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
   `;

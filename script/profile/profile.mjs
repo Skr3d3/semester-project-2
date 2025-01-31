@@ -73,7 +73,6 @@ function setupLoadMoreButton(name, initialListings) {
   const loadMoreButton = document.getElementById("load-more-button");
 
   if (!loadMoreButton) {
-    console.error("Load more button not found in DOM");
     return;
   }
 
