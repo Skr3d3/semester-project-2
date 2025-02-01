@@ -1,6 +1,8 @@
 import { displayListings } from "./listing.mjs";
 import { baseUrl } from "../auth/endpoints.mjs";
 
+const loadMoreBtn = document.getElementById("load-more-button");
+
 const listingsPerPage = 10;
 let currentPage = 1;
 let currentSort = "created";
@@ -29,83 +31,81 @@ async function searchListings(
   }
 }
 
-function handleSearch(inputElement) {
-  const searchQuery = inputElement.value.trim();
-  currentPage = 1;
+function redirectToSearch(query) {
+  let searchUrl = new URL(
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+      ? window.location.origin + "/index.html"
+      : window.location.origin + "/semester-project-2/"
+  );
 
-  if (searchQuery) {
-    searchListings(searchQuery, currentPage)
-      .then((filteredListings) => {
-        displayListings(filteredListings);
-        const url = new URL(window.location);
-        url.searchParams.set("search", searchQuery);
-        window.history.pushState({}, "", url);
-
-        document.getElementById("load-more-button").style.display = "block";
-      })
-      .catch((error) => {
-        console.error("Search failed:", error);
-      });
-  } else {
-    fetchListings().then((listings) =>
-      displayListings(listings.slice(0, listingsPerPage))
-    );
-  }
+  searchUrl.searchParams.set("search", query);
+  window.location.href = searchUrl.toString();
 }
 
-async function loadMoreSearchResults(query) {
-  currentPage++;
-  try {
-    const moreListings = await searchListings(query, currentPage);
-    if (moreListings.length > 0) {
-      displayListings(moreListings, true);
-    }
+async function executeSearch(query) {
+  if (!query) return;
 
-    if (moreListings.length < listingsPerPage) {
-      document.getElementById("load-more-button").style.display = "none";
+  try {
+    const results = await searchListings(query, currentPage);
+    displayListings(results);
+
+    if (results.length < listingsPerPage) {
+      loadMoreBtn.style.display = "none";
+    } else {
+      loadMoreBtn.style.display = "block";
     }
   } catch (error) {
-    console.error("Error loading more search results:", error);
+    console.error("Search execution error:", error);
   }
 }
 
 export function initializeSearch() {
+  console.log("Search script loaded");
+
+  const searchTop = document.getElementById("search-input-top");
+  const searchBottom = document.getElementById("search-input-bottom");
+  const searchButtonTop = document.getElementById("search-button-top");
+  const searchButtonBottom = document.getElementById("search-button-bottom");
+
+  searchButtonTop.addEventListener("click", () => {
+    console.log("Well.. That worked!");
+  });
+
   const searchBars = [
-    {
-      input: document.getElementById("search-input-top"),
-      button: document.getElementById("search-button-top"),
-    },
-    {
-      input: document.getElementById("search-input-bottom"),
-      button: document.getElementById("search-button-bottom"),
-    },
-  ];
+    { input: searchTop, button: searchButtonTop },
+    { input: searchBottom, button: searchButtonBottom },
+  ].filter(({ input, button }) => input && button);
 
   searchBars.forEach(({ input, button }) => {
-    button.addEventListener("click", () => handleSearch(input));
-
+    button.addEventListener("click", () =>
+      redirectToSearch(input.value.trim())
+    );
     input.addEventListener("keypress", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        handleSearch(input);
+        redirectToSearch(input.value.trim());
       }
     });
   });
 
-  document.getElementById("load-more-button").addEventListener("click", () => {
-    const searchQuery = document
-      .getElementById("search-input-top")
-      .value.trim();
-    if (searchQuery) {
-      loadMoreSearchResults(searchQuery);
-    }
-  });
-
   const params = new URLSearchParams(window.location.search);
   const searchQuery = params.get("search");
+
   if (searchQuery) {
-    document.getElementById("search-input-top").value = searchQuery;
-    document.getElementById("search-input-bottom").value = searchQuery;
-    handleSearch(document.getElementById("search-input-top"));
+    if (searchTop) searchTop.value = searchQuery;
+    if (searchBottom) searchBottom.value = searchQuery;
+    executeSearch(searchQuery);
+  }
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", () => {
+      const searchQuery = document
+        .getElementById("search-input-top")
+        .value.trim();
+      if (searchQuery) {
+        currentPage++;
+        executeSearch(searchQuery);
+      }
+    });
   }
 }

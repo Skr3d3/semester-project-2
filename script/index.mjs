@@ -1,3 +1,4 @@
+import { initializeSearch } from "./listings/search.mjs";
 import { setProfileButton, displayUserCredits } from "./profile/profile.mjs";
 
 const backBtn = document.getElementById("back-button");
@@ -76,4 +77,5 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   setProfileButton();
   displayUserCredits();
+  initializeSearch();
 });

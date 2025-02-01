@@ -1,6 +1,9 @@
 import { baseUrl } from "../auth/endpoints.mjs";
 import { initializeSearch } from "./search.mjs";
 
+const sortBtn = document.getElementById("sort-listings");
+const loadMoreBtn = document.getElementById("load-more-button");
+
 let allListings = [];
 let currentPage = 1;
 const listingsPerPage = 10;
@@ -111,36 +114,37 @@ async function sortAndDisplayListings(sortField) {
   }
 }
 
-document.getElementById("sort-listings").addEventListener("change", (event) => {
-  const selectedValue = event.target.value;
-  switch (selectedValue) {
-    case "newest":
-      sortAndDisplayListings("created");
-      currentSortOrder = "asc";
-      break;
-    case "oldest":
-      sortAndDisplayListings("created");
-      currentSortOrder = "desc";
-      break;
-    case "ending-soon":
-      sortAndDisplayListings("endsAt");
-      currentSortOrder = "desc";
-      break;
-    default:
-      sortAndDisplayListings("created");
-      currentSortOrder = "asc";
-  }
-});
+if (sortBtn) {
+  sortBtn.addEventListener("change", (event) => {
+    const selectedValue = event.target.value;
+    switch (selectedValue) {
+      case "newest":
+        sortAndDisplayListings("created");
+        currentSortOrder = "asc";
+        break;
+      case "oldest":
+        sortAndDisplayListings("created");
+        currentSortOrder = "desc";
+        break;
+      case "ending-soon":
+        sortAndDisplayListings("endsAt");
+        currentSortOrder = "desc";
+        break;
+      default:
+        sortAndDisplayListings("created");
+        currentSortOrder = "asc";
+    }
+  });
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await initializeSearch();
     const initialListings = await fetchListings(currentPage);
     displayListings(initialListings);
-
-    document
-      .getElementById("load-more-button")
-      .addEventListener("click", loadMoreListings);
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener("click", loadMoreListings);
+    }
   } catch (error) {
     console.error("Error initializing listings:", error);
   }
