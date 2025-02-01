@@ -2,7 +2,9 @@ import { baseUrl } from "../auth/endpoints.mjs";
 import { initializeSearch } from "./search.mjs";
 
 const sortBtn = document.getElementById("sort-listings");
-const loadMoreBtn = document.getElementById("load-more-button");
+const prevPageBtn = document.getElementById("prev-page-button");
+const nextPageBtn = document.getElementById("next-page-button");
+const pageNumberDisplay = document.getElementById("page-number");
 
 let allListings = [];
 let currentPage = 1;
@@ -37,12 +39,9 @@ function shortenText(text, maxLength) {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 }
 
-export function displayListings(listings, append = false) {
+export function displayListings(listings) {
   const container = document.getElementById("card-container");
-
-  if (!append) {
-    container.innerHTML = "";
-  }
+  container.innerHTML = "";
 
   const row = document.createElement("div");
   row.className = "row g-3";
@@ -58,7 +57,7 @@ export function displayListings(listings, append = false) {
     col.innerHTML = `
             <div class="card d-flex h-100">
                 <div class="img-container">
-                <img src="${imageUrl}" class="card-img-top" alt="${shortenText(imageAlt, 5)}">
+                    <img src="${imageUrl}" class="card-img-top" alt="${shortenText(imageAlt, 5)}">
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${shortenText(listing.title, 20)}</h5>
@@ -85,21 +84,33 @@ export function displayListings(listings, append = false) {
       location.href = `./listingdetails/index.html?id=${listingId}`;
     });
   });
+
+  updatePaginationButtons();
 }
 
-async function loadMoreListings() {
-  currentPage++;
-  try {
-    const nextListings = await fetchListings(currentPage);
-    if (nextListings.length > 0) {
-      displayListings(nextListings, true);
-    }
+async function changePage(newPage) {
+  if (newPage < 1) return;
+  currentPage = newPage;
 
-    if (nextListings.length < listingsPerPage) {
-      document.getElementById("load-more-button").style.display = "none";
-    }
+  try {
+    const listings = await fetchListings(currentPage);
+    displayListings(listings);
   } catch (error) {
-    console.error("Error loading more listings:", error);
+    console.error("Error loading page:", error);
+  }
+}
+
+function updatePaginationButtons() {
+  if (pageNumberDisplay) {
+    pageNumberDisplay.textContent = `Page ${currentPage}`;
+  }
+
+  if (prevPageBtn) {
+    prevPageBtn.disabled = currentPage === 1;
+  }
+
+  if (nextPageBtn) {
+    nextPageBtn.disabled = allListings.length < listingsPerPage;
   }
 }
 
@@ -115,36 +126,41 @@ async function sortAndDisplayListings(sortField) {
 }
 
 if (sortBtn) {
-  sortBtn.addEventListener("change", (event) => {
+  sortBtn.addEventListener("change", async (event) => {
     const selectedValue = event.target.value;
     switch (selectedValue) {
       case "newest":
+        currentSortOrder = "desc";
         sortAndDisplayListings("created");
-        currentSortOrder = "asc";
         break;
       case "oldest":
+        currentSortOrder = "asc";
         sortAndDisplayListings("created");
-        currentSortOrder = "desc";
         break;
       case "ending-soon":
+        currentSortOrder = "asc";
         sortAndDisplayListings("endsAt");
-        currentSortOrder = "desc";
         break;
       default:
+        currentSortOrder = "desc";
         sortAndDisplayListings("created");
-        currentSortOrder = "asc";
     }
   });
+}
+
+if (prevPageBtn) {
+  prevPageBtn.addEventListener("click", () => changePage(currentPage - 1));
+}
+
+if (nextPageBtn) {
+  nextPageBtn.addEventListener("click", () => changePage(currentPage + 1));
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await initializeSearch();
-    const initialListings = await fetchListings(currentPage);
-    displayListings(initialListings);
-    if (loadMoreBtn) {
-      loadMoreBtn.addEventListener("click", loadMoreListings);
-    }
+    allListings = await fetchListings(currentPage);
+    displayListings(allListings);
   } catch (error) {
     console.error("Error initializing listings:", error);
   }
