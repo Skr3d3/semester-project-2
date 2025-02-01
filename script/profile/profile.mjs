@@ -4,7 +4,7 @@ import { authFetch } from "../auth/fetch.mjs";
 
 async function fetchProfile(name) {
   if (!name) {
-    console.warn("Profile name not applicable. Skipping profile fetch.");
+    console.log("Profile name not applicable. Skipping profile fetch.");
     return;
   }
   const profileEndpoint = `${baseUrl}/auction/profiles/${name}`;
@@ -25,7 +25,7 @@ async function fetchProfile(name) {
 
 async function fetchUserListings(name, limit = 3, offset = 0) {
   if (!name) {
-    console.warn("Profile listings not applicable. Skipping listing fetch.");
+    console.log("Profile listings not applicable. Skipping listing fetch.");
     return;
   }
   const listingsEndpoint = `${baseUrl}/auction/profiles/${name}/listings?limit=${limit}&offset=${offset}`;
@@ -277,11 +277,9 @@ export function setProfileButton() {
     const payload = JSON.parse(atob(accessToken.split(".")[1]));
     const userName = payload.name;
 
-    const profileButton = document.querySelector(
-      "#sliding-menu .nav-link[href*='profile']"
-    );
+    const profileButton = document.getElementById("profile-btn");
     if (profileButton) {
-      profileButton.href = `/profile/index.html?name=${userName}`;
+      profileButton.href = `../profile/index.html?name=${userName}`;
     }
   } catch (error) {
     console.error("Failed to decode token or set profile button:", error);
