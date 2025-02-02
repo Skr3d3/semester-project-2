@@ -73,7 +73,6 @@ function displayProfile(profile) {
   if (!profileContainer) {
     return;
   }
-
   const tokenPayload = accessToken
     ? JSON.parse(atob(accessToken.split(".")[1]))
     : null;
@@ -213,8 +212,6 @@ export async function initializeProfilePage() {
     const listings = await fetchUserListings(profileName);
     displayListings(listings);
 
-    console.log("listings", listings);
-
     const profileUpdateForm = document.getElementById("profile-update-form");
 
     if (profileUpdateForm) {
@@ -242,7 +239,16 @@ export function setProfileButton() {
 
     const profileButton = document.getElementById("profile-btn");
     if (profileButton) {
-      profileButton.href = `../profile/index.html?name=${userName}`;
+      let originUrl = window.location.origin;
+
+      if (
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "localhost"
+      ) {
+        profileButton.href = `${originUrl}/profile/index.html?name=${userName}`;
+      } else {
+        profileButton.href = `${originUrl}/semester-project-2/profile/index.html?name=${userName}`;
+      }
     }
   } catch (error) {
     console.error("Failed to decode token or set profile button:", error);

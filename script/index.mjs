@@ -8,7 +8,16 @@ backBtn.addEventListener("click", () => {
 
 const navbarBrand = document.querySelector(".navbar-brand");
 navbarBrand.addEventListener("click", () => {
-  location.href = "../index.html";
+  let originUrl = window.location.origin;
+
+  if (
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+  ) {
+    location.href = originUrl + "/index.html";
+  } else {
+    location.href = originUrl + "/semester-project-2/";
+  }
 });
 
 const toggleButton = document.getElementById("dark-mode-toggle");
@@ -65,7 +74,15 @@ document.addEventListener("DOMContentLoaded", () => {
       authBtn.textContent = "Login / Signup";
       authBtn.classList.replace("btn-danger", "btn-subtle");
       authBtn.onclick = () => {
-        location.href = "./login/index.html";
+        let originUrl = window.location.origin;
+        if (
+          window.location.hostname === "127.0.0.1" ||
+          window.location.hostname === "localhost"
+        ) {
+          location.href = originUrl + "/login/index.html";
+        } else {
+          location.href = originUrl + "/semester-project-2/login/index.html";
+        }
       };
     }
   }

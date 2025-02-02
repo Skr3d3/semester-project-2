@@ -36,21 +36,22 @@ async function searchListings(
   }
 }
 
-function redirectToSearch(query) {
-  if (!query) return;
+function redirectToSearch(searchQuery) {
+  if (!searchQuery) return;
 
-  let searchUrl = new URL(
+  let searchUrl;
+
+  if (
     window.location.hostname === "127.0.0.1" ||
     window.location.hostname === "localhost"
-      ? window.location.origin + "/index.html"
-      : window.location.origin + "/semester-project-2/"
-  );
+  ) {
+    searchUrl = new URL(window.location.origin + "/index.html");
+  } else {
+    searchUrl = new URL(window.location.origin + "/semester-project-2/");
+  }
 
-  searchUrl.searchParams.set("search", query);
-  searchUrl.searchParams.set("page", "1");
-
-  window.history.pushState({}, "", searchUrl.toString());
-  executeSearch(query, 1);
+  searchUrl.searchParams.set("search", searchQuery);
+  window.location.href = searchUrl.toString();
 }
 
 async function executeSearch(query, page = 1) {
@@ -122,6 +123,10 @@ export function initializeSearch() {
   const searchButtonTop = document.getElementById("search-button-top");
   const searchButtonBottom = document.getElementById("search-button-bottom");
 
+  if (!searchTop && !searchBottom) {
+    return;
+  }
+
   const searchBars = [
     { input: searchTop, button: searchButtonTop },
     { input: searchBottom, button: searchButtonBottom },
@@ -141,12 +146,11 @@ export function initializeSearch() {
 
   const params = new URLSearchParams(window.location.search);
   const searchQuery = params.get("search");
-  const page = parseInt(params.get("page")) || 1;
 
   if (searchQuery) {
     if (searchTop) searchTop.value = searchQuery;
     if (searchBottom) searchBottom.value = searchQuery;
-    executeSearch(searchQuery, page);
+    executeSearch(searchQuery);
   }
 
   addPaginationListeners();
