@@ -23,12 +23,12 @@ async function fetchProfile(name) {
   }
 }
 
-async function fetchUserListings(name, limit = 3, offset = 0) {
+async function fetchUserListings(name) {
   if (!name) {
     console.log("Profile listings not applicable. Skipping listing fetch.");
     return;
   }
-  const listingsEndpoint = `${baseUrl}/auction/profiles/${name}/listings?limit=${limit}&offset=${offset}`;
+  const listingsEndpoint = `${baseUrl}/auction/profiles/${name}/listings`;
 
   try {
     const response = await authFetch(listingsEndpoint);
@@ -44,16 +44,14 @@ async function fetchUserListings(name, limit = 3, offset = 0) {
   }
 }
 
-function displayListings(listings, append = false) {
+function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
 
   if (!listingsContainer) {
     return;
   }
 
-  if (!append) {
-    listingsContainer.innerHTML = "";
-  }
+  listingsContainer.innerHTML = "";
 
   listings.forEach((listing) => {
     const listingElement = document.createElement("div");
@@ -66,38 +64,6 @@ function displayListings(listings, append = false) {
       </div>
     `;
     listingsContainer.appendChild(listingElement);
-  });
-}
-
-function setupLoadMoreButton(name, initialListings) {
-  const loadMoreButton = document.getElementById("load-more-button");
-
-  if (!loadMoreButton) {
-    return;
-  }
-
-  if (!initialListings || initialListings.length === 0) {
-    loadMoreButton.style.display = "none";
-    return;
-  }
-
-  let offset = initialListings.length;
-  const limit = 3;
-
-  loadMoreButton.addEventListener("click", async () => {
-    try {
-      const newListings = await fetchUserListings(name, limit, offset);
-      displayListings(newListings, true);
-      offset += newListings.length;
-      console.log(`offset: ${offset}, limit: ${limit}`);
-      console.log(`listings fetched: ${newListings.length}`);
-
-      if (newListings.length < limit) {
-        loadMoreButton.style.display = "none";
-      }
-    } catch (error) {
-      console.error("Error loading more listings:", error);
-    }
   });
 }
 
@@ -152,9 +118,6 @@ function displayProfile(profile) {
       }
 
       <div id="listings-container" class="mt-5"></div>
-      <div class="text-center">
-        <button id="load-more-button" class="btn btn-primary mt-3">Load More</button>
-      </div>
     `;
 
   if (isOwnProfile) {
@@ -250,7 +213,7 @@ export async function initializeProfilePage() {
     const listings = await fetchUserListings(profileName);
     displayListings(listings);
 
-    setupLoadMoreButton(profileName, listings);
+    console.log("listings", listings);
 
     const profileUpdateForm = document.getElementById("profile-update-form");
 

@@ -1,12 +1,17 @@
 import { displayListings } from "./listing.mjs";
 import { baseUrl } from "../auth/endpoints.mjs";
 
-const loadMoreBtn = document.getElementById("load-more-button");
+const prevPageBtn = document.getElementById("prev-page-button");
+const nextPageBtn = document.getElementById("next-page-button");
+const pageNumberDisplay = document.getElementById("page-number");
 
 const listingsPerPage = 10;
 let currentPage = 1;
 let currentSort = "created";
 let currentSortOrder = "desc";
+let currentSearchQuery = "";
+
+let paginationListenersAdded = false;
 
 async function searchListings(
   query,
@@ -32,6 +37,8 @@ async function searchListings(
 }
 
 function redirectToSearch(query) {
+  if (!query) return;
+
   let searchUrl = new URL(
     window.location.hostname === "127.0.0.1" ||
     window.location.hostname === "localhost"
@@ -40,37 +47,80 @@ function redirectToSearch(query) {
   );
 
   searchUrl.searchParams.set("search", query);
-  window.location.href = searchUrl.toString();
+  searchUrl.searchParams.set("page", "1");
+
+  window.history.pushState({}, "", searchUrl.toString());
+  executeSearch(query, 1);
 }
 
-async function executeSearch(query) {
+async function executeSearch(query, page = 1) {
   if (!query) return;
+
+  currentSearchQuery = query;
+  currentPage = page;
 
   try {
     const results = await searchListings(query, currentPage);
     displayListings(results);
-
-    if (results.length < listingsPerPage) {
-      loadMoreBtn.style.display = "none";
-    } else {
-      loadMoreBtn.style.display = "block";
-    }
+    updatePaginationButtons(results.length);
   } catch (error) {
     console.error("Search execution error:", error);
   }
 }
 
-export function initializeSearch() {
-  console.log("Search script loaded");
+function updatePaginationButtons(resultsLength) {
+  if (pageNumberDisplay) {
+    pageNumberDisplay.textContent = `Page ${currentPage}`;
+  }
 
+  if (prevPageBtn) {
+    prevPageBtn.disabled = currentPage === 1;
+  }
+
+  if (nextPageBtn) {
+    nextPageBtn.disabled = resultsLength < listingsPerPage;
+  }
+}
+
+function addPaginationListeners() {
+  if (paginationListenersAdded) return;
+
+  prevPageBtn?.addEventListener("click", () =>
+    changeSearchPage(currentPage - 1)
+  );
+  nextPageBtn?.addEventListener("click", () =>
+    changeSearchPage(currentPage + 1)
+  );
+
+  paginationListenersAdded = true;
+}
+
+async function changeSearchPage(newPage) {
+  if (newPage < 1) return;
+  currentPage = newPage;
+
+  console.log("Changing Page to:", currentPage);
+
+  const url = new URL(window.location);
+  url.searchParams.set("page", currentPage);
+  window.history.pushState({}, "", url.toString());
+
+  await executeSearch(currentSearchQuery, currentPage);
+}
+
+window.addEventListener("popstate", () => {
+  const params = new URLSearchParams(window.location.search);
+  const searchQuery = params.get("search") || "";
+  const page = parseInt(params.get("page")) || 1;
+
+  executeSearch(searchQuery, page);
+});
+
+export function initializeSearch() {
   const searchTop = document.getElementById("search-input-top");
   const searchBottom = document.getElementById("search-input-bottom");
   const searchButtonTop = document.getElementById("search-button-top");
   const searchButtonBottom = document.getElementById("search-button-bottom");
-
-  searchButtonTop.addEventListener("click", () => {
-    console.log("Well.. That worked!");
-  });
 
   const searchBars = [
     { input: searchTop, button: searchButtonTop },
@@ -91,21 +141,13 @@ export function initializeSearch() {
 
   const params = new URLSearchParams(window.location.search);
   const searchQuery = params.get("search");
+  const page = parseInt(params.get("page")) || 1;
 
   if (searchQuery) {
     if (searchTop) searchTop.value = searchQuery;
     if (searchBottom) searchBottom.value = searchQuery;
-    executeSearch(searchQuery);
+    executeSearch(searchQuery, page);
   }
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener("click", () => {
-      const searchQuery = document
-        .getElementById("search-input-top")
-        .value.trim();
-      if (searchQuery) {
-        currentPage++;
-        executeSearch(searchQuery);
-      }
-    });
-  }
+
+  addPaginationListeners();
 }

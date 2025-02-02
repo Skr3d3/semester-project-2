@@ -101,6 +101,7 @@ async function changePage(newPage) {
 }
 
 function updatePaginationButtons() {
+  console.log("Current page", currentPage);
   if (pageNumberDisplay) {
     pageNumberDisplay.textContent = `Page ${currentPage}`;
   }
